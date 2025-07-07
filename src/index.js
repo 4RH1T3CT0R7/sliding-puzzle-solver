@@ -97,6 +97,41 @@ const solvePuzzle = () => {
 		solutionMoves.shift();
 	}
 
+	// -----------------------------
+	// New: Convert directions to tile numbers
+	// -----------------------------
+	const tileMoves = [];
+	const simPuzzle = Puzzle.fromPuzzle(originalPuzzle); // copy to simulate
+
+	// Helper to perform a slide on the simulated puzzle
+	const slideFns = {
+		UP:   () => simPuzzle.slideUp(),
+		DOWN: () => simPuzzle.slideDown(),
+		LEFT: () => simPuzzle.slideLeft(),
+		RIGHT:() => simPuzzle.slideRight()
+	};
+
+	for (const dir of solutionMoves) {
+		let tileNumber;
+		switch (dir) {
+			case "UP":
+				tileNumber = simPuzzle.matrix[simPuzzle.blankRow - 1][simPuzzle.blankCol];
+				break;
+			case "DOWN":
+				tileNumber = simPuzzle.matrix[simPuzzle.blankRow + 1][simPuzzle.blankCol];
+				break;
+			case "LEFT":
+				tileNumber = simPuzzle.matrix[simPuzzle.blankRow][simPuzzle.blankCol - 1];
+				break;
+			case "RIGHT":
+				tileNumber = simPuzzle.matrix[simPuzzle.blankRow][simPuzzle.blankCol + 1];
+				break;
+		}
+		tileMoves.push(tileNumber);
+		slideFns[dir](); // advance simulated puzzle
+	}
+	// -----------------------------
+
 	// Output summary to screen
 	summaryOutput.value = "";
 	summaryOutput.value += `Runtime: ${solution["runtimeMs"].toFixed(3)}ms\n`;
@@ -104,18 +139,20 @@ const solvePuzzle = () => {
 		selectedAlgorithm !== "Strategic" || solutionMoves.length === 0 || solutionMoves.length === 1
 			? "(optimal)"
 			: "(nonoptimal)"
-	}\n`;
-	summaryOutput.value += `Max puzzles in memory: ${solution["maxPuzzlesInMemory"]}`;
-	console.log(algorithm.name, "SOLUTION:", solutionMoves.length - 1, solutionMoves);
-
-	// Output move list to screen
-	let moveList = "Move list:\n";
-	for (const [index, move] of solutionMoves.slice(0, 20000).entries()) {
-		moveList += `${index + 1}: ${move}\n`;
 	}
-	solutionOutput.value = moveList;
-	solutionOutput.value += solutionMoves.length > 20000 ? "See console for full move list...\n" : "";
+`;
+	summaryOutput.value += `Max puzzles in memory: ${solution["maxPuzzlesInMemory"]}`;
+	console.log(algorithm.name, "SOLUTION (directions):", solutionMoves.length - 1, solutionMoves);
+	console.log("SOLUTION (tiles):", tileMoves.length, tileMoves);
 
-	// Animate the solution
+	// Output move list to screen (tiles instead of directions)
+	let moveList = "Move list:\n";
+	tileMoves.slice(0, 20000).forEach((tile, i) => {
+		moveList += `${i + 1}: ${tile}\n`;
+	});
+	solutionOutput.value = moveList;
+	solutionOutput.value += tileMoves.length > 20000 ? "See console for full move list...\n" : "";
+
+	// Animate the solution (still uses directions)
 	animateMoveList(originalPuzzle, solutionMoves);
 };

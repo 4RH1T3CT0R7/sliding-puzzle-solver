@@ -445,11 +445,7 @@ const updatePuzzleDimensions = (newRow, newCol) => {
 		return false;
 	}
 
-	if (newRow * newCol > 9) {
-		resetAlgorithmDropdown(true);
-	} else {
-		resetAlgorithmDropdown(false);
-	}
+	resetAlgorithmDropdown(false);
 
 	// Set these new rows/cols to our UI state
 	const oldRows = state.puzzleRows;
