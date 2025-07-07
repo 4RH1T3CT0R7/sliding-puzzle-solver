@@ -1,6 +1,6 @@
 # Sliding Puzzle Solver
 
-For live demo see: https://jweilhammer.github.io/sliding-puzzle-solver/
+For live demo see: (https://4rh1t3ct0r7.github.io/sliding-puzzle-solver/)
 
 For details on what a sliding puzzle is, see: https://en.wikipedia.org/wiki/Sliding_puzzle
 
